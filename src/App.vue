@@ -1,17 +1,51 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <Calendar width="700px" :data="dt" />
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import Calendar from "./components/Calendar.vue";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    HelloWorld
-  }
-}
+    Calendar,
+  },
+  setup() {
+    const dt = [
+      {
+        id: "1",
+        title: "testing",
+        start: "16:30",
+        end: "17:30",
+        date: "2022-03-15",
+      },
+      {
+        id: "2",
+        title: "testing !",
+        date: "2022-03-15",
+        start: "16:30",
+        end: "17:30",
+      },
+      {
+        id: "3",
+        title: "testing",
+        date: "2022-03-11",
+        start: "11:30",
+        end: "12:00",
+      },
+      {
+        id: "4",
+        title: "testing",
+        date: "2022-03-01",
+        start: "12:30",
+        end: "13:30",
+      },
+    ];
+    return {
+      dt,
+    };
+  },
+};
 </script>
 
 <style lang="scss">
@@ -19,8 +53,6 @@ export default {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
 }
 </style>
