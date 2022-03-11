@@ -1,74 +1,102 @@
 <template>
-  <pre>
-  {{ monthName }}
-  </pre>
-  {{ selectedMonth }}
-  <hr />
-  {{ selectedMonthNumber }}
-
-  <button @click="next">Next</button>
-  <button @click="previous">Previous</button>
-  <button @click="today">Today</button>
-  <table id="tbl" :style="{ width: props_width }">
-    <thead>
-      <tr>
-        <th id="Sun">Sun</th>
-        <th id="Mon">Mon</th>
-        <th id="Tue">Tue</th>
-        <th id="Wed">Wed</th>
-        <th id="Thu">Thu</th>
-        <th id="Fri">Fri</th>
-        <th id="Sat">Sat</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="(v, i) in firstWeek">
-        <td
-          v-for="(v_, i_) in v"
-          :class="`ripple cal-date-box table-size-${tableWidth} today-${isToday(
-            v_
-          )} is-current-month-${isCurrentMonth(
-            v_,
-            getMonthName(selectedMonth.value).value
-          )}`"
-          :style="{ width: 'calc(' + customWidthHeight / 7 + 'px - 10px)' }"
-          :key="i_"
-          @click="parent"
-          :headers="getDateDetail(v_).short"
-          :data-date="getDateDetail(v_).date"
-          :data-year="getDateDetail(v_).year"
-          :data-month="getDateDetail(v_).month"
-          :data-day="getDateDetail(v_).value"
-          :data-week-day="getDateDetail(v_).weekDay"
-          :data-day-name="getDateDetail(v_).full"
-          data-type="td"
-        >
-          <div class="main-date" data-type="main-div">
-            <div class="date" data-type="date-parent">
-              <div class="content" data-type="date">
-                {{ getDateDetail(v_).value }}
-              </div>
-            </div>
-            <div class="data" data-type="data">
-              <div
-                v-if="search(props_data, v_).length > 0"
-                v-for="(v, i) in search(props_data, v_)"
-                :key="i"
-                :data-id="v.id"
-                :style="{ width: customWidthHeight / 7 - 4 + 'px' }"
-                class="item cut-text"
-                @click="childHandler"
-                data-type="item"
-              >
-                <span style="text-transform: capitalize">{{ v.title }}</span>
-                {{ v.start }} - {{ v.end }}
-              </div>
-            </div>
+  <div class="ar-calendar" :style="{ width: propsWidth }">
+    <div class="panel">
+      <div class="actions">
+        <button class="btn prev" @click="previous">Previous</button>
+        <button class="btn today" @click="today">Today</button>
+        <button class="btn next" @click="next">Next</button>
+      </div>
+      <div class="titles">
+        {{ getMonthName(selectedMonth.value).full }}
+        <strong style="margin-left: 10px">
+          {{ getMonthName(selectedMonth.value).year }}
+        </strong>
+      </div>
+    </div>
+    <div class="ar-card" v-if="cardShow">
+      <div class="card">
+        <div class="body">
+          <div class="items" v-if="selectedDate.items.length == 0">
+            No Record Found
           </div>
-        </td>
-      </tr>
-    </tbody>
-  </table>
+          <div
+            class="items"
+            v-for="(v, i) in selectedDate.items"
+            :key="i"
+            @click="eventName(v)"
+          >
+            {{ v.title }}
+          </div>
+        </div>
+        <div class="bottom">
+          <button class="ar-button secondary" @click="close">Close</button>
+        </div>
+      </div>
+    </div>
+    <table id="tbl" ref="tblRef" style="width: 100%">
+      <thead>
+        <tr>
+          <th id="Sun">Sun</th>
+          <th id="Mon">Mon</th>
+          <th id="Tue">Tue</th>
+          <th id="Wed">Wed</th>
+          <th id="Thu">Thu</th>
+          <th id="Fri">Fri</th>
+          <th id="Sat">Sat</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr v-for="(v, i) in weekWiseData">
+          <td
+            v-for="(v_, i_) in v"
+            :class="`ripple cal-date-box table-size-${tableWidth} today-${isToday(
+              v_
+            )} is-current-month-${isCurrentMonth(
+              v_,
+              getMonthName(selectedMonth.value).value
+            )}`"
+            :style="{ width: 'calc(' + customWidthHeight / 7 + 'px - 10px)' }"
+            :key="i_"
+            @click="parent"
+            :headers="getDateDetail(v_).short"
+            :data-date="getDateDetail(v_).date"
+            :data-year="getDateDetail(v_).year"
+            :data-month="getDateDetail(v_).month"
+            :data-day="getDateDetail(v_).value"
+            :data-week-day="getDateDetail(v_).weekDay"
+            :data-day-name="getDateDetail(v_).full"
+            data-type="td"
+          >
+            <div class="main-date" data-type="main-div">
+              <div class="date" data-type="date-parent">
+                <div class="content" data-type="date">
+                  {{ getDateDetail(v_).value }}
+                </div>
+              </div>
+              <div class="data" data-type="data">
+                <div
+                  v-if="search(propsData, v_).length > 0"
+                  v-for="(v, i) in search(propsData, v_)"
+                  :key="i"
+                  :data-id="v.id"
+                  :data-title="v.title"
+                  :data-start="v.start"
+                  :data-end="v.end"
+                  :data-date="v.date"
+                  :style="{ width: customWidthHeight / 7 - 4 + 'px' }"
+                  class="item cut-text"
+                  data-type="item"
+                >
+                  <span style="text-transform: capitalize">{{ v.title }}</span>
+                  {{ v.start }} - {{ v.end }}
+                </div>
+              </div>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
 </template>
 
 <script>
@@ -99,55 +127,81 @@ export default {
     },
   },
   setup(props, context) {
-    const now = new Date();
-    const props_data = computed(() => props.data);
-    const props_width = computed(() => props.width);
-    const childEleWidth = computed(() => {
-      const divided = customWidthHeight / 7;
-      return divided - 5;
-    });
-    const selectedMonth = reactive({ value: firstLastDate(now).start.date });
-    const monthName = computed(() => getMonthName(selectedMonth.value));
-    const data = ref(firstLastDate(now));
-    const firstWeek = computed(() => firstWeekData(data.value));
-    const days = ref(["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]);
-    const selectedMonthNumber = computed(
-      () => getMonthName(selectedMonth.value).value
-    );
-    const tableWidth = ref("");
-    const customWidthHeight = ref("");
-    onMounted(() => {
-      const tbl_ = document.getElementById("tbl");
-      if (tbl_.offsetWidth > 600) {
-        tableWidth.value = "more";
-      } else {
-        tableWidth.value = "less";
-      }
-      customWidthHeight.value = document.getElementById("tbl").offsetHeight;
-      window.addEventListener("resize", (e) => {
-        const tbl = document.getElementById("tbl");
-        const _height = tbl.offsetHeight;
-        customWidthHeight.value = document.getElementById("tbl").offsetHeight;
+    // Computed Variables
+    const propsData = computed(() => props.data);
+    const propsWidth = computed(() => props.width);
+    const weekWiseData = computed(() => firstWeekData(data.value)); // All Weeks Data
 
-        console.log(document.getElementById("tbl").offsetHeight);
+    // Simple Variables
+    const now = new Date(); // Today Date Time
+
+    // Ref Variables
+    const tblRef = ref(null); // Table Reference
+    const customWidthHeight = ref(""); // Custom Width
+    const data = ref(firstLastDate(now));
+    const tableWidth = ref(""); // table Width
+    const selectedDate = ref("");
+    const cardShow = ref("");
+
+    // Reactive Variables
+    const selectedMonth = reactive({ value: firstLastDate(now).start.date }); // Current Selected Month
+
+    onMounted(() => {
+      const tbl = tblRef.value; // getting table
+      tableWidth.value = tbl.offsetWidth > 600 ? "more" : "less"; // Checking size of table
+      customWidthHeight.value = tbl.offsetHeight;
+      // on resize event handler
+      window.addEventListener("resize", (e) => {
+        tableWidth.value = tbl.offsetWidth > 600 ? "more" : "less";
+        customWidthHeight.value = tbl.offsetHeight;
       });
     });
 
+    const close = () => {
+      cardShow.value = false;
+      selectedDate.value = "";
+    };
+    // on date click event
     const parent = (e) => {
-      const { date, dayName, day, month, weekday, year, id, type } =
-        e.target.dataset;
-      const obj = { type, date, dayName, day, month, weekday, year, id };
-      alert("type => " + type + ", date => " + date);
+      const type = e.target.dataset.type;
+      let _parentData = "";
+      if (type === "date" || type === "item") {
+        _parentData =
+          e.target.parentElement.parentElement.parentElement.dataset;
+      } else if (type === "date-parent" || type === "data") {
+        _parentData = e.target.parentElement.parentElement.dataset;
+      } else if (type === "main-date") {
+        _parentData = e.target.parentElement.dataset;
+      } else {
+        _parentData = e.target.dataset;
+      }
+      let _item = "";
+      if (type === "item") {
+        _item = e.target.dataset;
+      }
+      const obj = {
+        parent: {
+          date: _parentData.date,
+          day: _parentData.day,
+          dayName: _parentData.dayName,
+          month: _parentData.month,
+          type: _parentData.type,
+          weekDay: _parentData.weekDay,
+          year: _parentData.year,
+        },
+      };
+      cardShow.value = true;
+      const filtered = search(propsData.value, obj.parent.date);
+      obj.items = filtered;
+      selectedDate.value = obj;
       return obj;
     };
 
-    const childHandler = (e) => {
-      if (!e) var e = window.event;
-      e.cancelBubble = true;
-      if (e.stopPropagation) e.stopPropagation();
-      alert("Child Element Clicked!");
+    // Event Selection
+    const eventName = (data) => {
+      console.log(data);
     };
-
+    // Select previous Month
     const previous = () => {
       const _date = new Date(selectedMonth.value);
       _date.setDate(1);
@@ -156,6 +210,7 @@ export default {
       selectedMonth.value = firstLastDate(_date).start.date;
     };
 
+    // Select Next Month
     const next = () => {
       const _date = new Date(selectedMonth.value);
       _date.setDate(1);
@@ -164,6 +219,7 @@ export default {
       selectedMonth.value = firstLastDate(_date).start.date;
     };
 
+    // Select Current Month
     const today = () => {
       const _date = new Date();
       _date.setDate(1);
@@ -171,28 +227,31 @@ export default {
       data.value = firstLastDate(_date);
       selectedMonth.value = firstLastDate(_date).start.date;
     };
+
     return {
-      data,
-      days,
-      getDateDetail,
-      firstWeek,
+      // Variables
+      tblRef,
+      weekWiseData,
       isToday,
       isCurrentMonth,
       selectedMonth,
+      propsData,
+      propsWidth,
+      tableWidth,
+      customWidthHeight,
+      selectedDate,
+      cardShow,
+      // Imported Functions
+      getDateDetail,
       getMonthName,
-      monthName,
+      search,
+      // Created Functions
       previous,
       next,
-      selectedMonthNumber,
       today,
-      props_data,
-      search,
-      childHandler,
-      props_width,
-      tableWidth,
       parent,
-      customWidthHeight,
-      childEleWidth,
+      close,
+      eventName,
     };
   },
 };
@@ -311,6 +370,131 @@ export default {
     }
     .table-size-more {
       position: relative;
+    }
+  }
+}
+.ar-calendar {
+  position: relative;
+  .panel {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    .titles {
+      position: relative;
+      background: #464646;
+      color: #fff;
+      border-top-left-radius: 5px;
+      border-top-right-radius: 5px;
+      padding-right: 10px;
+      padding-left: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .actions {
+      .btn {
+        position: relative;
+        background: #464646;
+        color: #fff;
+        border: none;
+        padding: 10px;
+        transition: 0.5s ease-in-out;
+        cursor: pointer;
+        &:hover {
+          background: #f37021;
+        }
+        &.next {
+          border-top-right-radius: 5px;
+        }
+        &.prev {
+          border-top-left-radius: 5px;
+        }
+        &.today {
+          position: relative;
+        }
+      }
+    }
+  }
+  .ar-card {
+    position: absolute;
+    background: #46464650;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .card {
+      position: relative;
+      width: 250px;
+      height: fit-content;
+      background: #fff;
+      display: grid;
+      max-height: 300px;
+      border-radius: 10px;
+      .top {
+        position: relative;
+        height: 40px;
+        padding: 5px;
+        display: flex;
+        justify-content: right;
+        align-items: center;
+      }
+      .body {
+        position: relative;
+        overflow: auto;
+        max-height: 200px;
+        .items {
+          position: relative;
+          padding: 10px;
+          width: calc(100% - 20px);
+          text-transform: capitalize;
+          font-style: italic;
+          transition: 0.5s ease-in-out;
+          cursor: pointer;
+          &:hover {
+            background: #464646;
+            color: #fff;
+          }
+        }
+      }
+      .bottom {
+        position: relative;
+        height: 40px;
+        padding: 5px;
+        display: flex;
+        justify-content: right;
+        align-items: center;
+      }
+    }
+  }
+}
+.ar-button {
+  position: relative;
+  height: 35px;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-left: 5px;
+  margin-right: 5px;
+
+  &.primary {
+    background: #f37021;
+    &:hover {
+      background: #f3702190;
+    }
+    &:active {
+      background: #f37021;
+    }
+  }
+  &.secondary {
+    background: #464646;
+    &:hover {
+      background: #46464650;
+    }
+    &:active {
+      background: #464646;
     }
   }
 }
