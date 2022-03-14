@@ -1,14 +1,17 @@
 <template>
   <Calendar width="700px" :data="dt" />
+  <hr />
+  <Test />
 </template>
 
 <script>
 import Calendar from "./components/Calendar.vue";
-
+import Test from "./test";
 export default {
   name: "App",
   components: {
     Calendar,
+    Test,
   },
   setup() {
     const dt = [

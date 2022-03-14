@@ -182,13 +182,35 @@ export const isToday = (input) => {
   return proper_date === proper_today;
 };
 
-export const search = (data, key) => {
+export const search = (data = [], key) => {
   const date = new Date(key);
-
-  return data.filter((e) => {
+  const res = data.filter((e) => {
     const _date = new Date(e.date);
     if (_date.getTime() === date.getTime()) {
       return e;
     }
   });
+  return res;
+};
+
+export const dateSearch = (data = [], date) => {
+  const res = data.filter((d) => {
+    if (d === date) {
+      return true;
+    }
+  });
+  return res.length > 0;
+};
+
+export const dateSearchBetween = (data, dateCheck) => {
+  const dateFrom = data.firstDate.date;
+  const dateTo = data.lastDate.date;
+
+  var from = new Date(dateFrom);
+  var to = new Date(dateTo);
+  var check = new Date(dateCheck);
+
+  const res = check >= from && check <= to;
+
+  return res;
 };
