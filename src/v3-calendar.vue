@@ -501,5 +501,233 @@ export default {
 </script>
 
 <style scoped>
-@import url("./calendar.css");
+.selected-first,
+.selected-date {
+  background: var(--date) !important;
+}
+.selected-first .content,
+.selected-date .content {
+  background: #fff !important;
+  color: var(--date) !important;
+}
+.ripple {
+  position: relative;
+  overflow: hidden;
+  transform: translate3d(0, 0, 0);
+}
+.ripple:after {
+  content: "";
+  display: block;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  background-image: radial-gradient(circle, #000 10%, transparent 10.01%);
+  background-repeat: no-repeat;
+  background-position: 50%;
+  transform: scale(10, 10);
+  opacity: 0;
+  transition: transform 0.5s, opacity 1s;
+}
+.ripple:active:after {
+  transform: scale(0, 0);
+  opacity: 0.2;
+  transition: 0s;
+}
+.calendar {
+  position: relative;
+  width: 50%;
+  display: flex;
+  flex-wrap: wrap;
+}
+.calendar .calendar-box {
+  position: relative;
+  padding: 4.7px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 0.3px solid gray;
+}
+.calendar .head {
+  text-align: center;
+  background: var(--header);
+  color: #fff;
+  height: 50px !important;
+}
+.today-true .content {
+  background: var(--today);
+}
+.today-false .content {
+  background: var(--date);
+}
+.is-current-month-false {
+  background: var(--background);
+}
+#tbl,
+#tbl thead,
+#tbl tbody,
+#tbl tbody tr td {
+  border: 1px solid #ddd;
+}
+.cut-text {
+  text-overflow: ellipsis;
+  overflow: hidden;
+  width: 130px;
+  height: 1.2em;
+  white-space: nowrap;
+}
+#tbl {
+  position: relative;
+  max-width: 100%;
+  border-collapse: collapse;
+}
+#tbl tr {
+  position: relative;
+  height: 80px;
+}
+#tbl tr .cal-date-box .date .content {
+  color: #fff;
+  position: relative;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#tbl tr th {
+  position: relative;
+  padding: 10px;
+  width: 14.2857142857%;
+  background: var(--header);
+  /* height: 60px; */
+  color: #fff;
+}
+#tbl tr td {
+  padding: 10px 5px;
+  width: calc(100% - 10px);
+}
+#tbl tr .main-date {
+  position: relative;
+  height: 100%;
+  display: grid;
+}
+#tbl tr .main-date .date {
+  position: relative;
+  width: 100%;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 30px;
+  /* padding-top: 10px; */
+}
+#tbl tr .main-date .data {
+  position: relative;
+  padding: 2.5px;
+  width: calc(100% - 5px);
+  height: 45px;
+}
+#tbl tr .main-date .data .item {
+  font-size: 12px;
+  padding: 2px;
+  transition: 0.4s ease-in-out;
+  cursor: pointer;
+}
+#tbl tr .main-date .data .item:hover {
+  background: var(--date-light);
+}
+#tbl tr .table-size-less {
+  position: relative;
+}
+#tbl tr .table-size-less .data {
+  display: none;
+}
+#tbl tr .table-size-more {
+  position: relative;
+}
+.ar-calendar {
+  position: relative;
+}
+.ar-calendar .panel {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+}
+.ar-calendar .panel .titles {
+  position: relative;
+  background: var(--today);
+  color: #fff;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  padding-right: 10px;
+  padding-left: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.ar-calendar .panel .actions .btn {
+  position: relative;
+  background: var(--date);
+  color: #fff;
+  border: none;
+  padding: 3px;
+  transition: 0.5s ease-in-out;
+  cursor: pointer;
+}
+.ar-calendar .panel .actions .btn:hover {
+  background: #f37021;
+}
+.ar-calendar .panel .actions .btn.next {
+  border-top-right-radius: 5px;
+}
+.ar-calendar .panel .actions .btn.prev {
+  border-top-left-radius: 5px;
+}
+.ar-calendar .panel .actions .btn.today {
+  position: relative;
+}
+
+.ar-button {
+  position: relative;
+  height: 35px;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-left: 5px;
+  margin-right: 5px;
+}
+.ar-button.primary {
+  background: var(--today);
+}
+.ar-button.primary:hover {
+  background: var(--today-light);
+}
+.ar-button.primary:active {
+  background: var(--today);
+}
+.ar-button.secondary {
+  background: var(--header);
+}
+.ar-button.secondary:hover {
+  background: var(--header-light);
+}
+.ar-button.secondary:active {
+  background: var(--header);
+}
+.date .content .counts {
+  position: absolute;
+  background: red;
+  color: #fff;
+  border-radius: 50%;
+  top: -3px;
+  right: -3px;
+  padding: 1.5px;
+  text-align: center;
+  width: 10px;
+  height: 10px;
+}
 </style>
